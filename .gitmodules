@@ -1,7 +1,6 @@
 [submodule "evpp"]
 	path = evpp
 	url = https://github.com/Qihoo360/evpp.git
-
 [submodule "cpp-bencoding"]
 	path = cpp-bencoding
 	url = https://github.com/s3rvac/cpp-bencoding.git
