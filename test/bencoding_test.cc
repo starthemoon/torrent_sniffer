@@ -45,6 +45,7 @@ void TestForBDict() {
     std::string hand_repr = getPrettyRepr(bDictionary);
     std::cout << "handwrite (" << hand_repr.size() << ")\n"
         << hand_repr << '\n';
+    std::cout << "announce : " << std::static_pointer_cast<BString>((*bDictionary)[BString::create("announce")])->value() << std::endl;
 }
 
 void TestForBList() {
