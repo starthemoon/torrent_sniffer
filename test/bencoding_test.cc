@@ -46,6 +46,8 @@ void TestForBDict() {
     std::cout << "handwrite (" << hand_repr.size() << ")\n"
         << hand_repr << '\n';
     std::cout << "announce : " << std::static_pointer_cast<BString>((*bDictionary)[BString::create("announce")])->value() << std::endl;
+    std::string ret = ((*bDictionary)[BString::create("notexist")] == nullptr) ? "notexist" : "error";
+    std::cout << "notexist : " << ret << '\n';
 }
 
 void TestForBList() {

@@ -17,7 +17,9 @@ std::unordered_map<std::string, enum DHT::queryType> DHTnameQueryType = {
 
 DHT::DHT() 
     : transMan(new TransactionManager()),
-        rTable(new RoutingTable()) {}
+        rTable(new RoutingTable()),
+        tokenMan(new TokenManager(5, 5)),
+        infoHashMan() {}
 
 void DHT::sendQuery(enum queryType type, std::shared_ptr<BItem> a, const std::string id="") {
     std::string tid = id.empty() ? transMan->getNextID() : id;
@@ -82,31 +84,54 @@ void DHT::handleQuery(std::shared_ptr<BDictionary> pBDictionary) {
     // 告诉鸡哥这个是个好节点
     // tell ge ji this good
     // todo
+
+    std::string mynodeID;
+    std::shared_ptr<BDictionary> ret(
+        BDictionary::create({
+            { BString::create("id"), BString::create(mynodeID) }
+        })
+    );
     if (qstr == "ping") {
         // 问鸡哥我的node id是多少
+        // todo
         std::shared_ptr<BItem> mineID;
         sendResonpse(tstr, mineID);
     } else if (qstr == "find_node") {
         auto target = parseBDictionary<BString>(a, "target");
         if (target) {
             std::string targetstr = target->value();
-            // 问鸡哥与targetstr最接近的是什么,得到一个字符串组，
-            // 组成一个BOjbect
-            std::shared_ptr<BItem>  findRet;
-            sendResonpse(tstr, findRet);
+            // 问鸡哥与targetstr最接近的IP是什么
+            // todo
+            std::vector<std::string> nodeIPList;
+            std::string nodeIPstr;
+            for (const auto& piece : nodeIPList)
+                nodeIPstr += piece;
+            (*ret)[BString::create("nodes")] = BString::create(nodeIPstr);
+            sendResonpse(tstr, ret);
         }
     } else if (qstr == "get_peers") {
         auto info_hash = parseBDictionary<BString>(a, "info_hash");
         if (info_hash) {
             std::string info_hashstr = info_hash->value();
-            // 问鸡哥与info_hash最接近的是什么，得到一个字符串组
+            // 如果知道这个infohash对应的peer
+            // 就直接把peer的IP地址发送给其它节点
+            // 否则就问鸡哥与info_hash最接近的是什么，得到一个字符串组
             // 组成一个BOjbect，并加上token
-            std::shared_ptr<BItem> get_peersRet;
-            sendResonpse(tstr, get_peersRet);
+            // todo
+            std::string tokenstr = tokenMan->newToken(idstr);
+            (*ret)[BString::create("token")] = BString::create(tokenstr);
+            sendResonpse(tstr, ret);
         }
     } else if (qstr == "announce_peer") {
-        // 检查token是否和之前发送给他的一样
-        // 我自己记住对应的peer信息即可
+        auto token = parseBDictionary<BString>(a, "token");
+        if (token) {
+            // 检查token是否和之前发送给他的一样
+            std::string tokenstr = token->value();
+            if (tokenMan->check(idstr, tokenstr)) {
+                // 说明这个节点拥有这个资源
+                // 将其host和port记录下来
+            }
+        }
     }
 }
 

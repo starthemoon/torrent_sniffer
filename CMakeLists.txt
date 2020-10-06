@@ -14,7 +14,7 @@ link_directories(evpp/lib cpp-bencoding/src)
 add_executable(test_server test/tcp_server.cc)
 add_executable(test_client test/tcp_client.cc)
 add_executable(test_bencode test/bencoding_test.cc)
-add_executable(test_krpc_test test/krpc_test.cc src/dht.cc src/krpc.cc src/transaction.cc)
+add_executable(test_krpc_test test/krpc_test.cc src/dht.cc src/krpc.cc src/transaction.cc src/token.cc src/utils.cc)
 
 target_link_libraries(test_server evpp)
 target_link_libraries(test_client evpp)

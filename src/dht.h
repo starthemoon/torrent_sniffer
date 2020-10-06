@@ -9,6 +9,8 @@
 #include "transaction.h"
 #include "krpc.h"
 #include "routingtable.h"
+#include "token.h"
+#include "infoHash.h"
 
 
 using bencoding::BDictionary;
@@ -59,8 +61,18 @@ public:
 
 private:
 
+    // 事务管理器，用于管理本地发起dht事务。
+    // 一个事务包括：本地发起的查询请求，与该请求相对的请求
     std::shared_ptr<TransactionManager> transMan;
+
+    // 路由表，用于查询160位命名空间下与node_id或与info_hash最接近的k个dht nodes信息
     std::shared_ptr<RoutingTable> rTable;
+
+    // token管理器，关联IP地址和tokenstr。
+    // 传入IP地址，创建一个token。传入IP地址和token，告知调用者这个组合是否合法
+    std::shared_ptr<TokenManager> tokenMan;
+
+    std::shared_ptr<InfoHashManager> infoHashMan;
 
     // 将传入的事务id、查询类型以及查询参数组合成一个完整的BDictionary
     std::shared_ptr<BDictionary> makeQuery(const std::string& tid, enum queryType type, std::shared_ptr<BItem> a);
